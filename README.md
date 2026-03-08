@@ -235,7 +235,7 @@ Firewall (OPNsense) - 3 Interfaces
 This repository includes:
 
 - **[Comprehensive Build Report](docs/Network_Build_Report.md)** - Detailed report covering every phase
-- **[Visual Network Diagram](diagrams/network_topology_diagram.html)** - Interactive HTML diagram with color-coding
+- **[Visual Network Diagram](diagrams/Network_Topology.png)** - Network topology diagram
 - **[Quick Reference Guide](docs/QUICK_REFERENCE.md)** - IP addresses, commands, and troubleshooting
 
 ### Traffic Flow Example
