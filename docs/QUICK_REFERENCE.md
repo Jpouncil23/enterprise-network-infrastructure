@@ -2,84 +2,82 @@
 
 ## Device IP Addresses
 
-### Infrastructure
+### Routers
 ```
-Router-WAN (VM 677)
-  - eth5: 10.10.83.205/16 (WAN - Internet)
-  - eth4: 192.168.2.1/24 (LAN - To Firewall)
+Router-WAN (VyOS)
+  eth5: 10.10.83.205/16 (WAN - Internet via DHCP)
+  eth4: 192.168.2.1/24 (LAN - To Firewall)
 
-Firewall (VM 675)
-  - vtnet0: 192.168.2.2/24 (WAN)
-  - vtnet1: 10.0.1.1/24 (OPT1 - Screened Subnet)
-  - vtnet2: 10.0.2.2/24 (LAN - Transit)
-
-Router-LAN (VM 676)
-  - eth5: 10.0.2.1/24 (To Firewall)
-  - eth4: 192.168.1.254/24 (To Clients)
-
-Security Desktop (VM 674)
-  - eth0: 192.168.2.50/24
+Router-LAN (VyOS)
+  eth5: 10.0.2.1/24 (To Firewall - Transit Network)
+  eth4: 192.168.1.254/24 (To Clients)
 ```
 
-### Client Network (192.168.1.X)
+### Firewall
 ```
-AD/DNS Server (VM 691):    192.168.1.5
-Windows 11 Client (VM 697): 192.168.1.100
-RHEL Client (VM 678):       192.168.1.101
-Gateway: 192.168.1.254
+Firewall (OPNsense)
+  vtnet0 (WAN): 192.168.2.2/24
+  vtnet1 (OPT1): 10.0.1.1/24 (Screened Subnet/DMZ)
+  vtnet2 (LAN): 10.0.2.2/24 (Transit Network)
+```
+
+### Monitoring
+```
+Security Desktop (Kali): 192.168.2.50/24
+  Gateway: 192.168.2.1
+```
+
+### Client LAN (192.168.1.X)
+```
+Windows Client:     192.168.1.100/24
+RHEL Client:        192.168.1.101/24
+Server:             192.168.1.5/24
+Gateway:            192.168.1.254
 ```
 
 ### Screened Subnet (10.0.1.X)
 ```
-WebServer (VM 699):  10.0.1.100
-Database (VM 680):   10.0.1.200
-Gateway: 10.0.1.1
+WebServer:   10.0.1.100/24
+Database:    10.0.1.200/24
+Gateway:     10.0.1.1
 ```
 
 ## Network Zones
 
-| Network | Purpose | Gateway |
-|---------|---------|---------|
-| 10.10.X.X | Internet | 10.10.0.1 |
-| 192.168.2.X | WAN Switch Zone | 192.168.2.1 |
-| 10.0.2.X | Transit Network | 10.0.2.2 |
-| 192.168.1.X | Client LAN | 192.168.1.254 |
-| 10.0.1.X | Screened Subnet | 10.0.1.1 |
+| Network | Purpose | Gateway | Bridge |
+|---------|---------|---------|--------|
+| 10.10.X.X | Internet | 10.10.0.1 | maindhcp |
+| 192.168.2.X | WAN Switch / Security Zone | 192.168.2.1 | nct17a1 |
+| 10.0.2.X | Transit (Firewall ↔ Router-LAN) | 10.0.2.2 | nct17a3 |
+| 192.168.1.X | Client LAN | 192.168.1.254 | nct17a4 |
+| 10.0.1.X | Screened Subnet / DMZ | 10.0.1.1 | nct17a2 |
 
-## Proxmox Bridges
+## Traffic Flow
 
-| Bridge | Network | Connected Devices |
-|--------|---------|------------------|
-| maindhcp | 10.10.X.X | Router-WAN eth5 |
-| nct17a1 | 192.168.2.X | Router-WAN eth4, Firewall WAN, Security Desktop |
-| nct17a2 | 10.0.1.X | Firewall OPT1, WebServer, Database |
-| nct17a3 | 10.0.2.X | Firewall LAN, Router-LAN eth5 |
-| nct17a4 | 192.168.1.X | Router-LAN eth4, Clients, AD/DNS |
+**Client (192.168.1.100) → Internet:**
 
-## Access Information
+```
+1. Client sends to gateway 192.168.1.254 (Router-LAN eth4)
+2. Router-LAN NAT: 192.168.1.100 → 10.0.2.1
+3. Router-LAN forwards to 10.0.2.2 (Firewall transit)
+4. Firewall inspects and routes to WAN
+5. Firewall forwards to 192.168.2.1 (Router-WAN)
+6. Router-WAN NAT: 192.168.2.2 → 10.10.83.205
+7. Router-WAN forwards to 10.10.0.1 (Internet gateway)
+8. ✅ Reaches Internet
+```
 
-### Firewall Web GUI
-- **URL**: https://192.168.2.2
-- **Access From**: Security Desktop (192.168.2.50)
-- **Credentials**: root / opnsense
-- **Note**: WAN GUI access enabled for lab only
+## VyOS Commands
 
-### Default DNS Servers
-- **Primary**: 8.8.8.8 (Google)
-- **Secondary**: 1.1.1.1 (Cloudflare)
-- **Future**: 192.168.1.5 (AD/DNS after configuration)
-
-## Common Commands
-
-### VyOS (Router-WAN, Router-LAN)
+### Viewing Configuration
 ```bash
-# Enter configuration mode
-configure
-
 # Show interfaces
 show interfaces
 
-# Show routes
+# Show IP addresses
+show interfaces detail
+
+# Show routing table
 show ip route
 
 # Show NAT rules
@@ -87,83 +85,187 @@ show nat source rules
 
 # Show ARP table
 show arp
+```
 
-# Save configuration
+### Configuration Mode
+```bash
+# Enter configuration
+configure
+
+# Example: Set interface IP
+set interfaces ethernet eth4 address 192.168.1.254/24
+
+# Example: Set default route
+set protocols static route 0.0.0.0/0 next-hop 10.10.0.1
+
+# Example: Configure NAT
+set nat source rule 100 outbound-interface eth5
+set nat source rule 100 source address 192.168.1.0/24
+set nat source rule 100 translation address masquerade
+
+# Save and exit
 commit
 save
 exit
 ```
 
-### OPNsense (Firewall)
-```bash
-# Shell access
-Option 8 from console menu
+## OPNsense Commands
 
+### Console Menu
+```
+Option 1: Assign interfaces (may not persist in virtual environments)
+Option 2: Set interface IP address (recommended - persists)
+Option 8: Shell access
+```
+
+### Shell Commands
+```bash
 # Check firewall status
 pfctl -s info
 
 # Show firewall rules
 pfctl -sr
 
+# Show NAT rules
+pfctl -s nat
+
 # Enable firewall
 pfctl -e
 
-# Disable firewall
+# Disable firewall (troubleshooting only)
 pfctl -d
 
-# Show NAT rules
+# Show state table
+pfctl -s states
+```
+
+### Web GUI
+```
+URL: https://192.168.2.2
+Username: root
+Password: opnsense
+Access from: Security Desktop (192.168.2.50)
+```
+
+## Troubleshooting
+
+### No Internet Connectivity
+
+**Step 1:** Test local connectivity
+```bash
+# Ping gateway
+ping 192.168.1.254
+
+# Ping firewall (from client)
+ping 192.168.1.1  # or appropriate gateway
+```
+
+**Step 2:** Test external connectivity
+```bash
+# Ping Google DNS
+ping 8.8.8.8
+
+# Ping by hostname (tests DNS)
+ping google.com
+```
+
+**Step 3:** Check routing
+```bash
+# VyOS
+show ip route
+
+# Linux
+ip route show
+
+# Windows
+route print
+```
+
+**Step 4:** Check NAT
+```bash
+# VyOS
+show nat source rules
+show nat source translations
+
+# OPNsense
 pfctl -s nat
 ```
 
-### Client Configuration
+**Step 5:** Check firewall rules
 ```bash
-# Windows - Check IP
-ipconfig /all
-
-# Windows - Test connectivity
-ping 8.8.8.8
-
-# Linux - Check IP
-ip addr show
-
-# Linux - Test connectivity  
-ping -c 3 8.8.8.8
+# OPNsense
+pfctl -sr
+pfctl -s info  # verify enabled
 ```
-
-## Troubleshooting Checklist
-
-### No Internet Connectivity
-1. ✅ Check IP configuration (ipconfig/ip addr)
-2. ✅ Ping gateway (192.168.1.254 for clients)
-3. ✅ Ping firewall (192.168.1.1 or 10.0.1.1)
-4. ✅ Ping external IP (8.8.8.8)
-5. ✅ Check NAT rules on routers
-6. ✅ Check firewall rules on OPNsense
-7. ✅ Verify routing tables
 
 ### Layer 2 Issues
-- Check ARP table: `show arp` (VyOS) or `arp -a` (Windows/Linux)
-- Verify bridge connectivity in Proxmox
-- Check interface status: `show interfaces`
 
-### Firewall Issues
-- Check firewall logs in OPNsense GUI
-- Verify firewall is enabled: `pfctl -s info`
-- Review firewall rules: `pfctl -sr`
-- Check if traffic is being blocked by default-deny
+**Check ARP tables:**
+```bash
+# VyOS
+show arp
 
-## Traffic Flow Example
+# Linux
+arp -a
+ip neigh show
 
-**Client (192.168.1.100) → Internet:**
+# Windows
+arp -a
 ```
-1. Client → Router-LAN (192.168.1.254)
-2. Router-LAN NAT: 192.168.1.100 → 10.0.2.1
-3. Router-LAN → Firewall (10.0.2.2)
-4. Firewall → Router-WAN (192.168.2.1)
-5. Router-WAN NAT: 192.168.2.2 → 10.10.83.205
-6. Router-WAN → Internet
+
+**Symptoms:**
+- ARP shows "(incomplete)" = Layer 2 problem
+- ARP shows MAC address but ping fails = Layer 3/firewall issue
+
+### Common Problems
+
+**Subnet Conflict:**
+- Symptom: Routing ambiguity, incorrect interface selection
+- Check: Both interfaces on same subnet but different bridges?
+- Solution: Use separate subnets for each network role
+
+**Missing NAT:**
+- Symptom: Can ping gateway but not internet
+- Check: NAT rules configured on router?
+- Solution: Add masquerade rule for source network
+
+**Firewall Blocking:**
+- Symptom: Works with `pfctl -d`, fails with firewall enabled
+- Check: Firewall logs show blocks?
+- Solution: Create allow rule for required traffic
+
+**Configuration Not Persisting:**
+- Symptom: Settings lost after reboot
+- Check: Using correct configuration method?
+- Solution: VyOS use `commit; save`, OPNsense use option 2
+
+## Key Configuration Files
+
+### VyOS
 ```
+/config/config.boot  # Main configuration file
+```
+
+### OPNsense
+```
+/conf/config.xml  # Main configuration file
+```
+
+## DNS Servers
+
+**Current:**
+- Primary: 8.8.8.8 (Google)
+- Secondary: 1.1.1.1 (Cloudflare)
+
+## Important Notes
+
+1. **Always verify lab environment** - Documentation may not match reality
+2. **Check ARP first** - Distinguishes Layer 2 vs Layer 3 issues
+3. **Transit networks** - Essential for clean multi-layer routing
+4. **NAT is required** - For private networks to access internet
+5. **Default-deny firewalls** - Blocking is a feature, not a bug
+6. **Virtual quirks** - Interface detection may be unreliable
 
 ---
 
-*Keep this file handy for quick reference during configuration and troubleshooting!*
+*Keep this handy during network configuration and troubleshooting!*

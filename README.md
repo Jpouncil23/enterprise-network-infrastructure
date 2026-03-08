@@ -1,38 +1,37 @@
-# 🌐 Enterprise Network Infrastructure Project
+# 🌐 Enterprise Network Infrastructure Build
 
 [![Network Status](https://img.shields.io/badge/Network-Operational-success)](https://github.com)
 [![Devices](https://img.shields.io/badge/Devices-10%2F10-blue)](https://github.com)
-[![Zones](https://img.shields.io/badge/Zones-5-brightgreen)](https://github.com)
+[![Connectivity](https://img.shields.io/badge/Internet-100%25-brightgreen)](https://github.com)
 [![Security](https://img.shields.io/badge/Security-Multi--Layer-orange)](https://github.com)
 
-> A comprehensive enterprise network infrastructure build demonstrating multi-zone architecture, defense-in-depth security, and full internet connectivity across all network segments.
+> A complete enterprise network infrastructure build from scratch, demonstrating multi-zone architecture, defense-in-depth security, and full internet connectivity across all network segments.
 
 ## 📋 Table of Contents
 
 - [Overview](#overview)
 - [Network Architecture](#network-architecture)
-- [Key Features](#key-features)
+- [What Was Built](#what-was-built)
 - [Network Zones](#network-zones)
-- [Device Inventory](#device-inventory)
+- [Device Configuration](#device-configuration)
 - [Configuration Journey](#configuration-journey)
-- [Documentation](#documentation)
-- [Technologies Used](#technologies-used)
-- [Traffic Flow](#traffic-flow)
+- [Key Challenges Solved](#key-challenges-solved)
+- [Technical Documentation](#technical-documentation)
 - [Lessons Learned](#lessons-learned)
-- [Future Enhancements](#future-enhancements)
 - [Author](#author)
 
 ## 🎯 Overview
 
-This project documents the complete build process of an enterprise-grade network infrastructure from scratch. Built over the course of one week, this implementation showcases practical application of enterprise networking principles including:
+This project documents the complete build process of an enterprise-grade network infrastructure from scratch. Built over one week in a Proxmox virtual environment, this implementation demonstrates practical networking skills including:
 
 - **Network Segmentation** - 5 distinct security zones
 - **Multi-Layer Routing** - Complex routing with transit networks
-- **Defense-in-Depth** - Firewall with proper zone isolation
-- **NAT Configuration** - Multi-layer Network Address Translation
-- **Production-Ready** - All devices configured with internet connectivity
+- **Firewall Configuration** - OPNsense with zone-based security
+- **NAT Implementation** - Multi-layer Network Address Translation
+- **Troubleshooting** - Systematic problem-solving approach
 
-**Project Status:** ✅ **OPERATIONAL** - All zones online with full internet access
+**Project Duration:** 1 Week  
+**Final Status:** ✅ **OPERATIONAL** - All devices online with full internet connectivity
 
 ## 🏗️ Network Architecture
 
@@ -42,285 +41,334 @@ This project documents the complete build process of an enterprise-grade network
 Internet (10.10.X.X)
     ↓
 Router-WAN (VyOS)
-    ↓
+    ↓ 192.168.2.X
 Firewall (OPNsense) - 3 Interfaces
     ↓
-    ├─→ Router-LAN (Transit Network: 10.0.2.X)
+    ├─→ Transit Network (10.0.2.X)
+    │       ↓
+    │   Router-LAN (VyOS)
     │       ↓
     │   Client LAN (192.168.1.X)
-    │       ├─ Windows 11 Client
-    │       ├─ RHEL Client
-    │       └─ AD/DNS Server
+    │       └─ Clients & Servers
     │
     └─→ Screened Subnet (10.0.1.X)
-            ├─ WebServer
-            └─ Database Server
+            └─ Public-Facing Servers
 ```
 
 ### Architecture Highlights
 
 - **5 Network Zones** with distinct security levels
-- **10 Configured Devices** across infrastructure and client layers
-- **Multi-Layer NAT** (Router-LAN + Router-WAN)
+- **10 Configured Devices** with internet connectivity
+- **Multi-Layer NAT** for address translation
 - **Firewall-Based Segmentation** using OPNsense
-- **Transit Network Design** to avoid subnet conflicts
+- **Transit Network Design** to eliminate subnet conflicts
 
-## ✨ Key Features
+## ✨ What Was Built
 
-### Security
-- ✅ Three-tier security architecture (WAN, DMZ, LAN)
-- ✅ Firewall with default-deny policy
-- ✅ Zone-based access control
-- ✅ NAT hiding internal addressing
-- ✅ Screened subnet for public services
+### Network Infrastructure
+✅ **Router-WAN** - VyOS router providing internet gateway  
+✅ **Firewall** - OPNsense with 3 interfaces for zone segmentation  
+✅ **Router-LAN** - VyOS router for internal network routing  
+✅ **Security Desktop** - Kali Linux for monitoring  
 
-### Network Design
-- ✅ Proper IP address space allocation
-- ✅ Transit networks between routing layers
-- ✅ Multi-layer routing configuration
-- ✅ Full internet connectivity for all zones
-- ✅ Scalable architecture for future growth
+### Client Devices
+✅ **Windows 11 Client** - Workstation with internet access  
+✅ **RHEL Client** - Linux workstation with internet access  
+✅ **Windows Server** - Ready for future services (AD/DNS)  
 
-### Infrastructure
-- ✅ Mixed OS environment (Windows, Linux)
-- ✅ Enterprise-grade routing (VyOS)
-- ✅ Professional firewall (OPNsense)
-- ✅ Virtualized infrastructure (Proxmox)
-- ✅ Ready for Active Directory integration
+### Server Infrastructure (Screened Subnet)
+✅ **WebServer** - Windows server in DMZ  
+✅ **Database Server** - RHEL server in DMZ  
+
+### Networking Features
+✅ **Multi-zone segmentation** (WAN, Transit, LAN, DMZ)  
+✅ **Multi-layer routing** with static routes  
+✅ **NAT configuration** at multiple layers  
+✅ **Firewall rules** for zone-based access  
+✅ **100% internet connectivity** across all zones  
 
 ## 🌍 Network Zones
 
-| Zone | Network | Bridge | Purpose | Devices |
-|------|---------|--------|---------|---------|
-| **WAN/Internet** | 10.10.X.X | maindhcp | Internet Connection | Router-WAN |
-| **WAN Switch** | 192.168.2.X | nct17a1 | Security/Monitoring Zone | Router-WAN, Firewall, Security Desktop |
-| **Transit** | 10.0.2.X | nct17a3 | Firewall ↔ Router-LAN | Firewall, Router-LAN |
-| **Client LAN** | 192.168.1.X | nct17a4 | Internal Trusted Network | Router-LAN, Clients, AD/DNS |
-| **Screened Subnet** | 10.0.1.X | nct17a2 | DMZ for Public Services | Firewall, WebServer, Database |
+| Zone | Network | Purpose | Gateway | Status |
+|------|---------|---------|---------|--------|
+| **WAN/Internet** | 10.10.X.X | Internet Connection | 10.10.0.1 | ✅ Online |
+| **WAN Switch** | 192.168.2.X | Security/Monitoring Zone | 192.168.2.1 | ✅ Online |
+| **Transit** | 10.0.2.X | Firewall ↔ Router-LAN | 10.0.2.2 | ✅ Online |
+| **Client LAN** | 192.168.1.X | Internal Trusted Network | 192.168.1.254 | ✅ Online |
+| **Screened Subnet** | 10.0.1.X | DMZ for Public Services | 10.0.1.1 | ✅ Online |
 
-## 💻 Device Inventory
+## 💻 Device Configuration
 
-### Infrastructure Layer
+### Infrastructure Devices
 
-| Device | VM | IP Address(es) | OS | Role |
-|--------|-----|----------------|-----|------|
-| **Router-WAN** | 677 | 10.10.83.205, 192.168.2.1 | VyOS | Internet Gateway |
-| **Firewall** | 675 | 192.168.2.2, 10.0.2.2, 10.0.1.1 | OPNsense | Central Firewall |
-| **Router-LAN** | 676 | 10.0.2.1, 192.168.1.254 | VyOS | Internal Gateway |
-| **Security Desktop** | 674 | 192.168.2.50 | Kali Linux | Security Monitoring |
+| Device | IP Address(es) | OS | Role |
+|--------|----------------|-----|------|
+| **Router-WAN** | 10.10.83.205, 192.168.2.1 | VyOS | Internet Gateway |
+| **Firewall** | 192.168.2.2, 10.0.2.2, 10.0.1.1 | OPNsense | Central Firewall |
+| **Router-LAN** | 10.0.2.1, 192.168.1.254 | VyOS | Internal Gateway |
+| **Security Desktop** | 192.168.2.50 | Kali Linux | Monitoring |
 
-### Client Layer
+### Client & Server Devices
 
-| Device | VM | IP Address | OS | Role |
-|--------|-----|------------|-----|------|
-| **AD/DNS Server** | 691 | 192.168.1.5 | Windows Server 2025 | Domain Services |
-| **Windows Client** | 697 | 192.168.1.100 | Windows 11 | Workstation |
-| **RHEL Client** | 678 | 192.168.1.101 | RHEL | Workstation |
+| Device | IP Address | OS | Network Zone |
+|--------|-----------|-----|--------------|
+| **Windows Client** | 192.168.1.100 | Windows 11 | Client LAN |
+| **RHEL Client** | 192.168.1.101 | RHEL | Client LAN |
+| **Server** | 192.168.1.5 | Windows Server 2025 | Client LAN |
+| **WebServer** | 10.0.1.100 | Windows Server | Screened Subnet |
+| **Database** | 10.0.1.200 | RHEL | Screened Subnet |
 
-### Server Layer (Screened Subnet)
-
-| Device | VM | IP Address | OS | Role |
-|--------|-----|------------|-----|------|
-| **WebServer** | 699 | 10.0.1.100 | Windows Server | Public Web Services |
-| **Database** | 680 | 10.0.1.200 | RHEL | Database Server |
-
-**Total:** 10 devices configured with 100% internet connectivity
+**All devices configured with full internet connectivity**
 
 ## 📖 Configuration Journey
 
-### Major Phases
+### Phase 1: Router-WAN Setup
+**Challenge:** Lab environment used different IP scheme than documentation  
+**Solution:** Discovered actual addressing (10.10.X.X) through interface inspection  
+**Result:** Internet connectivity established with proper routing
 
-1. **Router-WAN Configuration**
-   - Interface discovery and mapping
-   - Internet connectivity establishment
-   - Static routing implementation
-   - NAT configuration
+**Configuration:**
+- WAN interface: 10.10.83.205 (DHCP)
+- LAN interface: 192.168.2.1/24
+- Static routes to internal networks
+- NAT rules for all zones
 
-2. **Firewall Deployment**
-   - Three-interface configuration
-   - Interface assignment persistence issues resolved
-   - Default security behavior understanding
-   - Web GUI access configuration
+---
 
-3. **Network Topology Discovery**
-   - Security Desktop placement decision
-   - Architectural gap resolution
-   - Zone assignment finalization
+### Phase 2: Firewall Configuration
+**Challenge:** Interface assignments not persisting, virtual environment detection issues  
+**Solution:** Used console menu Option 2 instead of Option 1 for persistence  
+**Result:** Three-interface firewall operational
 
-4. **Router-LAN Implementation**
-   - Subnet conflict identification
-   - Transit network creation (10.0.2.X)
-   - NAT configuration for client network
-   - Internet connectivity breakthrough
+**Configuration:**
+- WAN (vtnet0): 192.168.2.2/24
+- Transit (vtnet2): 10.0.2.2/24
+- Screened Subnet (vtnet1): 10.0.1.1/24
 
-5. **Client Workstation Setup**
-   - Windows 11 client configuration
-   - Active Directory server preparation
-   - RHEL client deployment
-   - Connectivity verification
+---
 
-6. **Screened Subnet Deployment**
-   - WebServer configuration
-   - Database server setup
-   - Firewall rule creation
-   - Zone internet access enablement
+### Phase 3: Router-LAN Implementation
+**Challenge:** Subnet conflict - both interfaces on 192.168.1.X  
+**Solution:** Created dedicated transit network (10.0.2.X)  
+**Result:** Clean routing with no ambiguity
 
-7. **Security Configuration**
-   - Firewall GUI access from Security Desktop
-   - "Block private networks" issue resolution
-   - Final rule implementation
+**Configuration:**
+- Transit interface: 10.0.2.1/24
+- Client interface: 192.168.1.254/24
+- NAT for client traffic
+- Default route via firewall
 
-### Key Challenges Solved
+---
 
-- ✅ Documentation vs. reality (lab environment differences)
-- ✅ Virtual environment interface detection issues
-- ✅ Bridge connectivity problems at infrastructure level
-- ✅ Subnet conflicts requiring transit network design
-- ✅ Multi-layer NAT configuration
-- ✅ Firewall default-deny security policy management
-- ✅ OPNsense "block private networks" feature conflict
+### Phase 4: Client Configuration
+**Challenge:** Clients could ping gateway but not internet  
+**Solution:** Missing NAT configuration on Router-LAN  
+**Result:** Full internet connectivity achieved
 
-## 📚 Documentation
+**Configurations:**
+- Windows 11: Static IP with proper gateway
+- RHEL: Static IP via nmcli/GUI
+- Windows Server: Static IP configuration
 
-### Available Documents
+---
 
-- **[Enterprise Network Build Report](docs/Enterprise_Network_Build_Report.docx)** - Comprehensive 25+ page detailed report
-- **[Network Topology (Markdown)](docs/network_topology.md)** - Text-based topology reference
-- **[Visual Network Diagram](diagrams/network_topology_diagram.html)** - Interactive HTML diagram
-- **Configuration Examples** - Router and firewall configurations
+### Phase 5: Screened Subnet Deployment
+**Challenge:** Firewall blocking all traffic by default  
+**Solution:** Created OPT1 firewall rule allowing internet access  
+**Result:** DMZ servers online with controlled access
 
-### Documentation Highlights
+**Configuration:**
+- Firewall rule: OPT1 net → any (allow)
+- Both servers configured with 10.0.1.1 gateway
+- Internet connectivity verified
 
-The comprehensive build report includes:
-- Detailed phase-by-phase configuration steps
-- Challenge identification and resolution
-- Technical lessons learned
-- Process improvement insights
-- Complete device inventory
-- Traffic flow examples
-- Next steps and recommendations
+---
 
-## 🛠️ Technologies Used
+### Phase 6: Firewall GUI Access
+**Challenge:** "Block private networks" feature preventing WAN access  
+**Solution:** Disabled RFC1918 blocking on WAN interface (lab only)  
+**Result:** Secure GUI access from Security Desktop
 
-### Networking
-- **VyOS** - Enterprise routing platform
-- **OPNsense** - Open-source firewall/router
-- **Proxmox** - Virtualization platform
+## 🔧 Key Challenges Solved
 
-### Operating Systems
-- **Windows Server 2025** - Active Directory/DNS
-- **Windows 11** - Client workstation
-- **RHEL (Red Hat Enterprise Linux)** - Linux clients and servers
-- **Kali Linux** - Security monitoring
+### 1. Documentation vs. Reality
+**Problem:** Requirements specified 172.31.0.X network that didn't exist in lab  
+**Solution:** Systematic investigation to discover actual 10.10.X.X scheme  
+**Learning:** Always verify actual environment before trusting documentation
 
-### Protocols & Concepts
-- Static routing
-- Network Address Translation (NAT)
-- Firewall rule management
-- VLAN/Bridge segmentation
-- Defense-in-depth architecture
+### 2. Virtual Environment Limitations
+**Problem:** Proxmox bridge assignments locked, interface detection unreliable  
+**Solution:** Adapted configuration to work within constraints  
+**Learning:** Virtual environments have different characteristics than physical
 
-## 🔄 Traffic Flow
+### 3. Subnet Conflict
+**Problem:** Router-LAN with both interfaces on same subnet (192.168.1.X)  
+**Solution:** Created transit network (10.0.2.X) for firewall connection  
+**Learning:** Proper IP space allocation prevents routing ambiguity
 
-### Example: Client to Internet
+### 4. Missing NAT Configuration
+**Problem:** Clients reached gateway but couldn't access internet  
+**Solution:** Configured masquerade NAT on Router-LAN outbound interface  
+**Learning:** Multi-layer NAT essential for private network internet access
+
+### 5. Firewall Default-Deny
+**Problem:** Screened Subnet devices blocked from internet  
+**Solution:** Created explicit allow rules via OPNsense GUI  
+**Learning:** Default security behaviors are features, not bugs
+
+### 6. Bridge Connectivity Issues
+**Problem:** Some Proxmox bridges appeared non-functional  
+**Solution:** Worked around by using working bridges, adapted design  
+**Learning:** Infrastructure constraints require creative solutions
+
+### 7. Configuration Persistence
+**Problem:** OPNsense interface IPs not persisting after reload  
+**Solution:** Used correct console menu option that writes to config file  
+**Learning:** Different configuration methods have different persistence behavior
+
+## 📚 Technical Documentation
+
+### Complete Documentation Set
+
+This repository includes:
+
+- **[Comprehensive Build Report](docs/Enterprise_Network_Build_Report.docx)** - 25+ page detailed report covering every phase
+- **[Network Topology](docs/network_topology.md)** - Text-based topology with all IP addresses and configurations
+- **[Visual Network Diagram](diagrams/network_topology_diagram.html)** - Interactive HTML diagram with color-coding
+- **[Quick Reference Guide](docs/QUICK_REFERENCE.md)** - IP addresses, commands, and troubleshooting
+
+### Traffic Flow Example
+
+**Client (192.168.1.100) → Internet:**
 
 ```
-Client (192.168.1.100)
-    ↓ Gateway: 192.168.1.254
-Router-LAN eth4 (receives packet)
-    ↓ NAT: 192.168.1.100 → 10.0.2.1
-Router-LAN eth5 (10.0.2.1)
-    ↓ Routes to: 10.0.2.2
-Firewall vtnet2 (10.0.2.2)
-    ↓ Routes internally
-Firewall vtnet0 WAN (192.168.2.2)
-    ↓ Gateway: 192.168.2.1
-Router-WAN eth4 (192.168.2.1)
-    ↓ NAT: 192.168.2.2 → 10.10.83.205
-Router-WAN eth5 (10.10.83.205)
-    ↓ Gateway: 10.10.0.1
-Internet ✅
+1. Client sends packet → Gateway 192.168.1.254 (Router-LAN eth4)
+2. Router-LAN NAT: 192.168.1.100 → 10.0.2.1
+3. Router-LAN forwards → 10.0.2.2 (Firewall transit)
+4. Firewall routes internally → WAN interface
+5. Firewall forwards → 192.168.2.1 (Router-WAN)
+6. Router-WAN NAT: 192.168.2.2 → 10.10.83.205
+7. Router-WAN forwards → 10.10.0.1 (Internet gateway)
+8. Packet reaches Internet ✅
 ```
 
-### Traffic Flow Principles
-
-1. **Multi-layer NAT** - Two NAT translations (Router-LAN, Router-WAN)
-2. **Firewall inspection** - All traffic inspected at zone boundaries
-3. **Routing decisions** - Each hop makes independent routing choices
-4. **Return path** - NAT tables maintain state for return traffic
+**Return traffic follows reverse path using NAT state tables**
 
 ## 💡 Lessons Learned
 
 ### Technical Insights
 
-1. **Documentation vs. Reality** - Lab environments often differ from documentation; always verify
-2. **Layer 2 vs. Layer 3 Troubleshooting** - Use ARP tables to distinguish physical vs. logical issues
-3. **Virtual Environment Constraints** - Bridge assignments and link detection behave differently than physical
-4. **Network Segmentation Planning** - Proper IP allocation prevents routing conflicts
-5. **NAT Is Critical** - Without NAT, return traffic cannot find its way back to private IPs
-6. **Default Security Is a Feature** - Firewall blocking is intentional; understand before disabling
+**1. Layer 2 vs. Layer 3 Troubleshooting**
+- Use ARP tables to distinguish physical vs. logical connectivity issues
+- "Host unreachable" + ARP "(incomplete)" = Layer 2 problem
+- Check both physical connectivity AND IP configuration
+
+**2. Documentation Verification**
+- Lab environments frequently differ from documentation
+- Verify through multiple methods before trusting specs
+- Use diagnostic commands to discover actual configuration
+
+**3. Network Segmentation Planning**
+- Proper IP address allocation prevents routing conflicts
+- Transit networks essential for multi-layer routing
+- Each subnet should have single, clear purpose
+
+**4. NAT Configuration**
+- Multi-layer NAT required for nested private networks
+- Without NAT, upstream devices can't route replies
+- Symptoms appear as one-way connectivity
+
+**5. Default Security Behaviors**
+- Firewalls blocking traffic is correct behavior
+- Understand security features before disabling
+- Default-deny policies protect networks
+
+**6. Virtual Infrastructure Constraints**
+- Interface link detection may be unreliable
+- Bridge assignments may be locked
+- Configuration persistence methods differ from physical
 
 ### Process Improvements
 
-1. **Systematic Approach** - Work outside-in (Internet → Router → Firewall → Clients)
-2. **Iterative Problem-Solving** - Multiple approaches often needed; persistence pays off
-3. **Detailed Documentation** - Essential for troubleshooting and future reference
-4. **Test Each Layer** - Verify connectivity at each layer before proceeding
+**1. Systematic Troubleshooting**
+- Work outside-in: Internet → Router-WAN → Firewall → Router-LAN → Clients
+- Verify each layer before proceeding
+- Document each step for reference
 
-## 🚀 Future Enhancements
+**2. Iterative Problem-Solving**
+- First approach may not work
+- Multiple attempts with different methods often needed
+- Persistence and adaptability essential
 
-### High Priority
-- [ ] Configure Active Directory Domain Services
-- [ ] Join all workstations to domain
-- [ ] Deploy web application on WebServer
-- [ ] Configure database with schema
-- [ ] Implement email services
+**3. Configuration Documentation**
+- Record every command and configuration change
+- Note both successes and failures
+- Detailed notes invaluable for troubleshooting
 
-### Medium Priority
-- [ ] Deploy AI chatbot integration
-- [ ] Set up network monitoring/analytics
-- [ ] Configure automated backups
-- [ ] Implement vulnerability scanning
-- [ ] CSET security assessment
+## 🛠️ Technologies Used
 
-### Security Hardening
-- [ ] Implement zone-to-zone access policies
-- [ ] Configure comprehensive firewall logging
-- [ ] Remove Security Desktop WAN GUI access
-- [ ] Deploy IDS/IPS capabilities
-- [ ] Implement VPN for remote access
+### Networking Platforms
+- **VyOS** - Enterprise routing (Router-WAN, Router-LAN)
+- **OPNsense** - Enterprise firewall with web GUI
+- **Proxmox** - Virtualization infrastructure
+
+### Operating Systems
+- **Windows Server 2025** - Server platform
+- **Windows 11** - Client workstation
+- **RHEL (Red Hat Enterprise Linux)** - Linux clients and servers
+- **Kali Linux** - Security monitoring
+
+### Networking Concepts
+- Static routing
+- Network Address Translation (NAT)
+- Firewall rule management
+- Zone-based security
+- Defense-in-depth architecture
+- Bridge/VLAN segmentation
 
 ## 📊 Project Metrics
 
 | Metric | Value |
 |--------|-------|
-| **Total Configuration Time** | 1 Week |
+| **Build Duration** | 1 Week |
 | **Devices Configured** | 10 (100%) |
-| **Network Zones** | 5 (Complete) |
+| **Network Zones** | 5 |
 | **Internet Connectivity** | 100% |
-| **Major Issues Resolved** | 7+ |
-| **Project Status** | ✅ OPERATIONAL |
+| **Major Challenges Resolved** | 7+ |
+| **Routers Configured** | 2 (VyOS) |
+| **Firewalls Configured** | 1 (OPNsense) |
+| **Documentation Pages** | 25+ |
 
 ## 👨‍💻 Author
 
 **Justin**  
 Network Engineer  
-Enterprise Network Infrastructure Project
+
+*Demonstrated Skills:*
+- Enterprise network design and implementation
+- Multi-zone security architecture
+- VyOS routing configuration
+- OPNsense firewall management
+- Network troubleshooting and problem-solving
+- Technical documentation
 
 ---
 
-## 📝 License
+## 🎓 Project Purpose
 
-This project documentation is provided for educational purposes.
-
-## 🙏 Acknowledgments
-
-- VyOS community for excellent routing platform
-- OPNsense project for enterprise-grade firewall
-- Proxmox for robust virtualization infrastructure
+This project demonstrates:
+- Practical enterprise networking skills
+- Systematic troubleshooting methodology
+- Ability to adapt to infrastructure constraints
+- Professional documentation practices
+- Defense-in-depth security implementation
 
 ---
 
-**Built with ❤️ and lots of troubleshooting**
+**Network Status:** ✅ **FULLY OPERATIONAL**
+
+*All devices configured • All zones online • Full internet connectivity • Multi-layer security*
+
+---
 
 *Last Updated: February 19, 2026*
