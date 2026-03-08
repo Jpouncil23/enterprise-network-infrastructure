@@ -7,7 +7,7 @@
 
 > A complete enterprise network infrastructure build from scratch, demonstrating multi-zone architecture, defense-in-depth security, and full internet connectivity across all network segments.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Network Architecture](#network-architecture)
@@ -18,9 +18,11 @@
 - [Key Challenges Solved](#key-challenges-solved)
 - [Technical Documentation](#technical-documentation)
 - [Lessons Learned](#lessons-learned)
+- [Technologies Used](#technologies-used)
+- [Project Metrics](#project-metrics)
 - [Author](#author)
 
-## 🎯 Overview
+## Overview
 
 This project documents the complete build process of an enterprise-grade network infrastructure from scratch. Built over one week in a Proxmox virtual environment, this implementation demonstrates practical networking skills including:
 
@@ -33,7 +35,7 @@ This project documents the complete build process of an enterprise-grade network
 **Project Duration:** 1 Week  
 **Final Status:** ✅ **OPERATIONAL** - All devices online with full internet connectivity
 
-## 🏗️ Network Architecture
+## Network Architecture
 
 ### High-Level Design
 
@@ -63,7 +65,7 @@ Firewall (OPNsense) - 3 Interfaces
 - **Firewall-Based Segmentation** using OPNsense
 - **Transit Network Design** to eliminate subnet conflicts
 
-## ✨ What Was Built
+## What Was Built
 
 ### Network Infrastructure
 ✅ **Router-WAN** - VyOS router providing internet gateway  
@@ -87,7 +89,7 @@ Firewall (OPNsense) - 3 Interfaces
 ✅ **Firewall rules** for zone-based access  
 ✅ **100% internet connectivity** across all zones  
 
-## 🌍 Network Zones
+## Network Zones
 
 | Zone | Network | Purpose | Gateway | Status |
 |------|---------|---------|---------|--------|
@@ -97,7 +99,7 @@ Firewall (OPNsense) - 3 Interfaces
 | **Client LAN** | 192.168.1.X | Internal Trusted Network | 192.168.1.254 | ✅ Online |
 | **Screened Subnet** | 10.0.1.X | DMZ for Public Services | 10.0.1.1 | ✅ Online |
 
-## 💻 Device Configuration
+## Device Configuration
 
 ### Infrastructure Devices
 
@@ -120,7 +122,7 @@ Firewall (OPNsense) - 3 Interfaces
 
 **All devices configured with full internet connectivity**
 
-## 📖 Configuration Journey
+## Configuration Journey
 
 ### Phase 1: Router-WAN Setup
 **Challenge:** The original documentation specified 3 different IP address schemes, but the lab environment only provided 2 interfaces on the WAN router
@@ -189,7 +191,7 @@ Firewall (OPNsense) - 3 Interfaces
 **Solution:** Disabled RFC1918 blocking on WAN interface (lab only)  
 **Result:** Secure GUI access from Security Desktop
 
-## 🔧 Key Challenges Solved
+## Key Challenges Solved
 
 ### 1. Adapting the Network Design
 **Problem:** The original documentation called for 3 separate IP address schemes, but the lab only had 2 available interfaces on the WAN router, making the third 172.x.x.x network impossible to implement as designed
@@ -226,7 +228,7 @@ Firewall (OPNsense) - 3 Interfaces
 **Solution:** Used correct console menu option that writes to config file  
 **Learning:** Different configuration methods have different persistence behavior
 
-## 📚 Technical Documentation
+## Technical Documentation
 
 ### Complete Documentation Set
 
@@ -253,7 +255,7 @@ This repository includes:
 
 **Return traffic follows reverse path using NAT state tables**
 
-## 💡 Lessons Learned
+## Lessons Learned
 
 ### Technical Insights
 
@@ -304,7 +306,7 @@ This repository includes:
 - Note both successes and failures
 - Detailed notes invaluable for troubleshooting
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Networking Platforms
 - **VyOS** - Enterprise routing (Router-WAN, Router-LAN)
@@ -325,7 +327,7 @@ This repository includes:
 - Defense-in-depth architecture
 - Bridge/VLAN segmentation
 
-## 📊 Project Metrics
+## Project Metrics
 
 | Metric | Value |
 |--------|-------|
@@ -337,7 +339,7 @@ This repository includes:
 | **Routers Configured** | 2 (VyOS) |
 | **Firewalls Configured** | 1 (OPNsense) |
 
-## 👨‍💻 Author
+## Author
 
 **Justin**  
 Network Engineer  
@@ -352,7 +354,7 @@ Network Engineer
 
 ---
 
-## 🎓 Project Purpose
+## Project Purpose
 
 This project demonstrates:
 - Practical enterprise networking skills
