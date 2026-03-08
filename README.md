@@ -123,8 +123,8 @@ Firewall (OPNsense) - 3 Interfaces
 ## 📖 Configuration Journey
 
 ### Phase 1: Router-WAN Setup
-**Challenge:** Lab environment used different IP scheme than documentation  
-**Solution:** Discovered actual addressing (10.10.X.X) through interface inspection  
+**Challenge:** The original documentation specified 3 different IP address schemes, but the lab environment only provided 2 interfaces on the WAN router
+**Solution:** Adapted the network design to maintain a similar architecture while removing the third 172.x.x.x network, consolidating traffic through the available interfaces
 **Result:** Internet connectivity established with proper routing
 
 **Configuration:**
@@ -191,10 +191,10 @@ Firewall (OPNsense) - 3 Interfaces
 
 ## 🔧 Key Challenges Solved
 
-### 1. Documentation vs. Reality
-**Problem:** Requirements specified 172.31.0.X network that didn't exist in lab  
-**Solution:** Systematic investigation to discover actual 10.10.X.X scheme  
-**Learning:** Always verify actual environment before trusting documentation
+### 1. Adapting the Network Design
+**Problem:** The original documentation called for 3 separate IP address schemes, but the lab only had 2 available interfaces on the WAN router, making the third 172.x.x.x network impossible to implement as designed
+**Solution:** Redesigned the network to preserve the same overall architecture and security zones while working within the 2-interface constraint, removing the 172.x.x.x network
+**Learning:** Understanding how to adapt a design to real-world constraints while maintaining architectural integrity
 
 ### 2. Virtual Environment Limitations
 **Problem:** Proxmox bridge assignments locked, interface detection unreliable  
@@ -232,7 +232,7 @@ Firewall (OPNsense) - 3 Interfaces
 
 This repository includes:
 
-- **[Comprehensive Build Report](docs/Network_Build_Report.docx)** - 25+ page detailed report covering every phase
+- **[Comprehensive Build Report](docs/Network_Build_Report.md)** - Detailed report covering every phase
 - **[Visual Network Diagram](diagrams/network_topology_diagram.html)** - Interactive HTML diagram with color-coding
 - **[Quick Reference Guide](docs/QUICK_REFERENCE.md)** - IP addresses, commands, and troubleshooting
 
@@ -262,10 +262,10 @@ This repository includes:
 - "Host unreachable" + ARP "(incomplete)" = Layer 2 problem
 - Check both physical connectivity AND IP configuration
 
-**2. Documentation Verification**
-- Lab environments frequently differ from documentation
-- Verify through multiple methods before trusting specs
-- Use diagnostic commands to discover actual configuration
+**2. Adapting Designs to Real-World Constraints**
+- Original designs may not always be implementable as-is due to hardware or interface limitations
+- Knowing how to modify a design while preserving the core architecture is a critical skill
+- Evaluate what can be consolidated or removed without compromising security zones
 
 **3. Network Segmentation Planning**
 - Proper IP address allocation prevents routing conflicts
@@ -336,7 +336,6 @@ This repository includes:
 | **Major Challenges Resolved** | 7+ |
 | **Routers Configured** | 2 (VyOS) |
 | **Firewalls Configured** | 1 (OPNsense) |
-| **Documentation Pages** | 25+ |
 
 ## 👨‍💻 Author
 

@@ -259,7 +259,7 @@ arp -a
 
 ## Important Notes
 
-1. **Always verify lab environment** - Documentation may not match reality
+1. **Adapt designs to your environment** - Original documentation may call for more interfaces or networks than available, so adjust the architecture accordingly
 2. **Check ARP first** - Distinguishes Layer 2 vs Layer 3 issues
 3. **Transit networks** - Essential for clean multi-layer routing
 4. **NAT is required** - For private networks to access internet
