@@ -1,0 +1,46 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor/IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+
+# Temporary Files
+*.tmp
+*.temp
+~$*.docx
+~$*.xlsx
+
+# Log Files
+*.log
+
+# Backup Files
+*.bak
+*.backup
+
+# Sensitive Information (if any configuration files are added later)
+*.key
+*.pem
+passwords.txt
+credentials/
+
+# Node modules (if any scripts are added)
+node_modules/
+package-lock.json
+
+# Python (if any scripts are added)
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# Build artifacts
+dist/
+build/

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Network Topology</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .device {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .device:hover rect {
+            filter: brightness(1.1);
+            stroke-width: 3;
+        }
+        .device:hover text {
+            font-weight: bold;
+        }
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #ecf0f1;
+        }
+        .legend h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 30px;
+            margin-bottom: 10px;
+        }
+        .legend-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 2px solid #34495e;
+            border-radius: 3px;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #155724;
+            font-weight: bold;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .info-card {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #ecf0f1;
+        }
+        .info-card h4 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Enterprise Network Topology</h1>
+        <div class="subtitle">Complete Infrastructure Diagram - February 19, 2026</div>
+        
+        <svg viewBox="0 0 1400 1200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definitions for gradients and patterns -->
+            <defs>
+                <!-- Internet cloud gradient -->
+                <linearGradient id="internetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+                </linearGradient>
+                <!-- WAN zone gradient -->
+                <linearGradient id="wanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#EE5A52;stop-opacity:0.9" />
+                </linearGradient>
+                <!-- Firewall gradient -->
+                <linearGradient id="firewallGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#F39C12;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#E67E22;stop-opacity:0.9" />
+                </linearGradient>
+                <!-- Router gradient -->
+                <linearGradient id="routerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#9B59B6;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#8E44AD;stop-opacity:0.9" />
+                </linearGradient>
+                <!-- Server gradient -->
+                <linearGradient id="serverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1ABC9C;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#16A085;stop-opacity:0.9" />
+                </linearGradient>
+                <!-- Client gradient -->
+                <linearGradient id="clientGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3498DB;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#2980B9;stop-opacity:0.9" />
+                </linearGradient>
+            </defs>
+
+            <!-- Connection Lines (draw first so they appear behind boxes) -->
+            <!-- Internet to Router-WAN -->
+            <line x1="700" y1="80" x2="700" y2="140" stroke="#34495e" stroke-width="3" stroke-dasharray="5,5"/>
+            
+            <!-- Router-WAN to devices on WAN zone -->
+            <line x1="700" y1="220" x2="500" y2="300" stroke="#e74c3c" stroke-width="2.5"/>
+            <line x1="700" y1="220" x2="700" y2="300" stroke="#e74c3c" stroke-width="2.5"/>
+            <line x1="700" y1="220" x2="900" y2="300" stroke="#e74c3c" stroke-width="2.5"/>
+            
+            <!-- Firewall connections -->
+            <line x1="700" y1="380" x2="500" y2="480" stroke="#f39c12" stroke-width="2.5"/>
+            <line x1="700" y1="380" x2="900" y2="480" stroke="#f39c12" stroke-width="2.5"/>
+            
+            <!-- Router-LAN to Firewall -->
+            <line x1="900" y1="560" x2="900" y2="640" stroke="#9b59b6" stroke-width="2.5"/>
+            
+            <!-- Router-LAN to Client devices -->
+            <line x1="900" y1="720" x2="600" y2="840" stroke="#3498db" stroke-width="2.5"/>
+            <line x1="900" y1="720" x2="800" y2="840" stroke="#3498db" stroke-width="2.5"/>
+            <line x1="900" y1="720" x2="1000" y2="840" stroke="#3498db" stroke-width="2.5"/>
+            
+            <!-- Screened Subnet connections -->
+            <line x1="500" y1="560" x2="350" y2="840" stroke="#1abc9c" stroke-width="2.5"/>
+            <line x1="500" y1="560" x2="450" y2="840" stroke="#1abc9c" stroke-width="2.5"/>
+
+            <!-- Network Zone Labels -->
+            <text x="700" y="270" font-size="14" fill="#e74c3c" font-weight="bold" text-anchor="middle">WAN Zone (192.168.2.X) - nct17a1</text>
+            <text x="500" y="450" font-size="14" fill="#1abc9c" font-weight="bold" text-anchor="middle">Screened Subnet (10.0.1.X) - nct17a2</text>
+            <text x="900" y="610" font-size="14" fill="#9b59b6" font-weight="bold" text-anchor="middle">Transit (10.0.2.X) - nct17a3</text>
+            <text x="900" y="810" font-size="14" fill="#3498db" font-weight="bold" text-anchor="middle">Client LAN (192.168.1.X) - nct17a4</text>
+
+            <!-- Internet Cloud -->
+            <g class="device">
+                <ellipse cx="700" cy="50" rx="80" ry="30" fill="url(#internetGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="700" y="50" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">INTERNET</text>
+                <text x="700" y="68" font-size="11" fill="white" text-anchor="middle">10.10.0.1</text>
+            </g>
+
+            <!-- Router-WAN -->
+            <g class="device">
+                <rect x="620" y="140" width="160" height="80" rx="8" fill="url(#routerGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="700" y="165" font-size="15" fill="white" font-weight="bold" text-anchor="middle">Router-WAN</text>
+                <text x="700" y="182" font-size="11" fill="white" text-anchor="middle">VM 677 - VyOS</text>
+                <text x="700" y="196" font-size="10" fill="white" text-anchor="middle">eth5: 10.10.83.205</text>
+                <text x="700" y="209" font-size="10" fill="white" text-anchor="middle">eth4: 192.168.2.1</text>
+            </g>
+
+            <!-- Security Desktop -->
+            <g class="device">
+                <rect x="420" y="300" width="160" height="70" rx="8" fill="url(#wanGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="500" y="322" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Security Desktop</text>
+                <text x="500" y="338" font-size="10" fill="white" text-anchor="middle">VM 674 - Kali</text>
+                <text x="500" y="352" font-size="10" fill="white" text-anchor="middle">192.168.2.50</text>
+                <text x="500" y="364" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- Firewall -->
+            <g class="device">
+                <rect x="620" y="300" width="160" height="80" rx="8" fill="url(#firewallGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="700" y="322" font-size="15" fill="white" font-weight="bold" text-anchor="middle">Firewall</text>
+                <text x="700" y="338" font-size="11" fill="white" text-anchor="middle">VM 675 - OPNsense</text>
+                <text x="700" y="352" font-size="9" fill="white" text-anchor="middle">WAN: 192.168.2.2</text>
+                <text x="700" y="364" font-size="9" fill="white" text-anchor="middle">LAN: 10.0.2.2</text>
+                <text x="700" y="375" font-size="9" fill="white" text-anchor="middle">OPT1: 10.0.1.1</text>
+            </g>
+
+            <!-- WAN Switch Zone Label -->
+            <rect x="820" y="300" width="160" height="70" rx="8" fill="#ecf0f1" stroke="#95a5a6" stroke-width="2" stroke-dasharray="5,5"/>
+            <text x="900" y="325" font-size="13" fill="#7f8c8d" font-weight="bold" text-anchor="middle">WAN Switch Zone</text>
+            <text x="900" y="342" font-size="10" fill="#7f8c8d" text-anchor="middle">192.168.2.0/24</text>
+            <text x="900" y="356" font-size="10" fill="#7f8c8d" text-anchor="middle">Bridge: nct17a1</text>
+
+            <!-- Screened Subnet Gateway -->
+            <g class="device">
+                <rect x="420" y="480" width="160" height="80" rx="8" fill="url(#firewallGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="500" y="502" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Firewall OPT1</text>
+                <text x="500" y="518" font-size="11" fill="white" text-anchor="middle">Gateway</text>
+                <text x="500" y="533" font-size="10" fill="white" text-anchor="middle">10.0.1.1/24</text>
+                <text x="500" y="547" font-size="9" fill="white" text-anchor="middle">Screened Subnet</text>
+            </g>
+
+            <!-- Transit Network -->
+            <g class="device">
+                <rect x="820" y="480" width="160" height="80" rx="8" fill="url(#routerGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="900" y="502" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Router-LAN</text>
+                <text x="900" y="518" font-size="11" fill="white" text-anchor="middle">VM 676 - VyOS</text>
+                <text x="900" y="533" font-size="10" fill="white" text-anchor="middle">eth5: 10.0.2.1</text>
+                <text x="900" y="547" font-size="9" fill="white" text-anchor="middle">To Firewall</text>
+            </g>
+
+            <!-- Router-LAN Client Side -->
+            <g class="device">
+                <rect x="820" y="640" width="160" height="80" rx="8" fill="url(#routerGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="900" y="662" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Router-LAN</text>
+                <text x="900" y="678" font-size="11" fill="white" text-anchor="middle">Gateway</text>
+                <text x="900" y="693" font-size="10" fill="white" text-anchor="middle">eth4: 192.168.1.254</text>
+                <text x="900" y="707" font-size="9" fill="white" text-anchor="middle">Client LAN</text>
+            </g>
+
+            <!-- WebServer -->
+            <g class="device">
+                <rect x="270" y="840" width="160" height="75" rx="8" fill="url(#serverGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="350" y="862" font-size="14" fill="white" font-weight="bold" text-anchor="middle">WebServer</text>
+                <text x="350" y="878" font-size="10" fill="white" text-anchor="middle">VM 699 - Windows</text>
+                <text x="350" y="892" font-size="10" fill="white" text-anchor="middle">10.0.1.100</text>
+                <text x="350" y="906" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- Database -->
+            <g class="device">
+                <rect x="370" y="840" width="160" height="75" rx="8" fill="url(#serverGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="450" y="862" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Database</text>
+                <text x="450" y="878" font-size="10" fill="white" text-anchor="middle">VM 680 - RHEL</text>
+                <text x="450" y="892" font-size="10" fill="white" text-anchor="middle">10.0.1.200</text>
+                <text x="450" y="906" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- AD/DNS Server -->
+            <g class="device">
+                <rect x="520" y="840" width="160" height="75" rx="8" fill="url(#clientGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="600" y="862" font-size="14" fill="white" font-weight="bold" text-anchor="middle">AD/DNS Server</text>
+                <text x="600" y="878" font-size="10" fill="white" text-anchor="middle">VM 691 - Win2025</text>
+                <text x="600" y="892" font-size="10" fill="white" text-anchor="middle">192.168.1.5</text>
+                <text x="600" y="906" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- Windows Client -->
+            <g class="device">
+                <rect x="720" y="840" width="160" height="75" rx="8" fill="url(#clientGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="800" y="862" font-size="14" fill="white" font-weight="bold" text-anchor="middle">Windows Client</text>
+                <text x="800" y="878" font-size="10" fill="white" text-anchor="middle">VM 697 - Win11</text>
+                <text x="800" y="892" font-size="10" fill="white" text-anchor="middle">192.168.1.100</text>
+                <text x="800" y="906" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- RHEL Client -->
+            <g class="device">
+                <rect x="920" y="840" width="160" height="75" rx="8" fill="url(#clientGrad)" stroke="#2c3e50" stroke-width="2"/>
+                <text x="1000" y="862" font-size="14" fill="white" font-weight="bold" text-anchor="middle">RHEL Client</text>
+                <text x="1000" y="878" font-size="10" fill="white" text-anchor="middle">VM 678 - RHEL</text>
+                <text x="1000" y="892" font-size="10" fill="white" text-anchor="middle">192.168.1.101</text>
+                <text x="1000" y="906" font-size="9" fill="white" text-anchor="middle">✅ Online</text>
+            </g>
+
+            <!-- Bridge Labels -->
+            <text x="50" y="880" font-size="12" fill="#16a085" font-weight="bold">Bridge: nct17a2</text>
+            <text x="900" y="1000" font-size="12" fill="#2980b9" font-weight="bold" text-anchor="middle">Bridge: nct17a4</text>
+
+        </svg>
+
+        <div class="status">
+            🎉 Network Status: FULLY OPERATIONAL - All Zones Online with Internet Connectivity
+        </div>
+
+        <div class="legend">
+            <h3>Legend</h3>
+            <div class="legend-item">
+                <span class="legend-box" style="background: linear-gradient(135deg, #9B59B6, #8E44AD);"></span>
+                <span>Router/Gateway</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-box" style="background: linear-gradient(135deg, #F39C12, #E67E22);"></span>
+                <span>Firewall</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-box" style="background: linear-gradient(135deg, #1ABC9C, #16A085);"></span>
+                <span>Server</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-box" style="background: linear-gradient(135deg, #3498DB, #2980B9);"></span>
+                <span>Client/Workstation</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-box" style="background: linear-gradient(135deg, #FF6B6B, #EE5A52);"></span>
+                <span>Security/Monitoring</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-box" style="background: #bdc3c7; border-style: dashed;"></span>
+                <span>Not Configured</span>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>📊 Network Zones (5)</h4>
+                <ul>
+                    <li><strong>WAN/Internet:</strong> 10.10.X.X</li>
+                    <li><strong>WAN Switch:</strong> 192.168.2.X (nct17a1)</li>
+                    <li><strong>Transit:</strong> 10.0.2.X (nct17a3)</li>
+                    <li><strong>Client LAN:</strong> 192.168.1.X (nct17a4)</li>
+                    <li><strong>Screened Subnet:</strong> 10.0.1.X (nct17a2)</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h4>🖥️ Configured Devices (10)</h4>
+                <ul>
+                    <li>✅ Router-WAN (VM 677) - VyOS</li>
+                    <li>✅ Firewall (VM 675) - OPNsense</li>
+                    <li>✅ Router-LAN (VM 676) - VyOS</li>
+                    <li>✅ Security Desktop (VM 674) - Kali</li>
+                    <li>✅ AD/DNS (VM 691) - Windows 2025</li>
+                    <li>✅ Windows Client (VM 697) - Win11</li>
+                    <li>✅ RHEL Client (VM 678) - RHEL</li>
+                    <li>✅ WebServer (VM 699) - Windows</li>
+                    <li>✅ Database (VM 680) - RHEL</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h4>🔒 Security Features</h4>
+                <ul>
+                    <li>✅ Multi-zone segmentation</li>
+                    <li>✅ Central firewall (OPNsense)</li>
+                    <li>✅ Multi-layer NAT</li>
+                    <li>✅ Defense-in-depth architecture</li>
+                    <li>✅ Screened subnet (DMZ)</li>
+                    <li>✅ Firewall rules configured</li>
+                    <li>✅ Private network isolation</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h4>🌐 Internet Connectivity</h4>
+                <ul>
+                    <li>✅ WAN Zone - Online</li>
+                    <li>✅ Client LAN - Online</li>
+                    <li>✅ Screened Subnet - Online</li>
+                    <li>✅ All devices have DNS</li>
+                    <li>✅ NAT configured on all layers</li>
+                    <li>✅ Routing tables configured</li>
+                    <li>✅ Gateway redundancy</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f0f3f5; border-radius: 10px; border: 2px solid #d1d8e0;">
+            <h3 style="color: #2c3e50; margin-top: 0;">📝 Traffic Flow Example</h3>
+            <p style="color: #34495e; line-height: 1.8;">
+                <strong>Client (192.168.1.100) → Internet:</strong><br>
+                Client → Router-LAN (192.168.1.254) → NAT to 10.0.2.1 → Router-LAN eth5 (10.0.2.1) → 
+                Firewall LAN (10.0.2.2) → Firewall WAN (192.168.2.2) → Router-WAN (192.168.2.1) → 
+                NAT to 10.10.83.205 → Internet Gateway (10.10.0.1) → <strong>Internet ✅</strong>
+            </p>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center; color: #7f8c8d; font-size: 0.9em;">
+            <p>Network Engineer: Justin | Generated: February 19, 2026</p>
+            <p>Enterprise Network Infrastructure Project | All Rights Reserved</p>
+        </div>
+    </div>
+</body>
+</html>
